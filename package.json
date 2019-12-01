@@ -1,0 +1,19 @@
+{
+  "name": "devcamper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mike-evlantev/DevCamper.git"
+  },
+  "author": "Mike Evlantev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mike-evlantev/DevCamper/issues"
+  },
+  "homepage": "https://github.com/mike-evlantev/DevCamper#readme"
+}
