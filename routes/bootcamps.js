@@ -2,7 +2,7 @@ const router = require("express").Router();
 const {
   getBootcamps,
   getBootcampById,
-  createBootcamp,
+  createBootcampAsync,
   updateBootcampById,
   deleteBootcampById
 } = require("../controllers/bootcamps");
@@ -10,7 +10,7 @@ const {
 router
   .route("/")
   .get(getBootcamps)
-  .post(createBootcamp);
+  .post(createBootcampAsync);
 
 router
   .route("/:id")
