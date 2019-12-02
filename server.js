@@ -9,6 +9,9 @@ const app = express();
 const PORT = process.env.PORT;
 
 // Middleware
+// Body Parser
+app.use(express.json());
+// Morgan logger
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
