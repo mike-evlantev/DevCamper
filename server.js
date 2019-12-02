@@ -1,4 +1,5 @@
 const express = require("express");
+const connectDb = require("./config/db");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const bootcamps = require("./routes/bootcamps");
@@ -14,6 +15,9 @@ if (process.env.NODE_ENV === "development") {
 
 // Routes
 app.use("/api/v1/bootcamps", bootcamps);
+
+// Connect to database
+connectDb();
 
 // Server
 app.listen(
