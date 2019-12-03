@@ -1,21 +1,21 @@
 const router = require("express").Router();
 const {
-  getBootcamps,
-  getBootcampById,
+  getBootcampsAsync,
+  getBootcampByIdAsync,
   createBootcampAsync,
-  updateBootcampById,
-  deleteBootcampById
+  updateBootcampByIdAsync,
+  deleteBootcampByIdAsync
 } = require("../controllers/bootcamps");
 
 router
   .route("/")
-  .get(getBootcamps)
+  .get(getBootcampsAsync)
   .post(createBootcampAsync);
 
 router
   .route("/:id")
-  .get(getBootcampById)
-  .put(updateBootcampById)
-  .delete(deleteBootcampById);
+  .get(getBootcampByIdAsync)
+  .put(updateBootcampByIdAsync)
+  .delete(deleteBootcampByIdAsync);
 
 module.exports = router;
