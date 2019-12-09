@@ -10,13 +10,32 @@ const _earthRadius = 3962;
 // @access  Public
 exports.getBootcampsAsync = asyncHandler(async (req, res, next) => {
   let query;
-  let queryStr = JSON.stringify(req.query);
+  // Copy req.query
+  const reqQuery = { ...req.query };
+  // Fields to remove
+  const removeFields = ["select", "sort"];
+  //Loop through removeFields and delete them from reqQuery
+  removeFields.forEach(param => delete reqQuery[param]);
+  // Create query string
+  let queryStr = JSON.stringify(reqQuery);
+  // Create operators ($gt, $gte, etc.)
   queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
-  query = JSON.parse(queryStr);
-  const bootcamps =
-    Object.keys(query).length === 0 // is the query object empty?
-      ? await Bootcamp.find()
-      : await Bootcamp.find(query);
+  // Build query
+  query = Bootcamp.find(JSON.parse(queryStr));
+  // Select fields
+  if (req.query.select) {
+    const fields = req.query.select.split(",").join(" ");
+    query = query.select(fields);
+  }
+  // Sort
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join(" ");
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort("-createdAt");
+  }
+  // Executing query
+  const bootcamps = await query;
   if (!bootcamps) {
     return next(new ErrorResponse(`No Bootcamps found`, 404));
   }
