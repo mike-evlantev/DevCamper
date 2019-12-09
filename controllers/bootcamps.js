@@ -1,6 +1,9 @@
 const ErrorResponse = require("../utils/errorResponse");
+const geocoder = require("../utils/geocoder");
 const Bootcamp = require("../models/Bootcamp");
 const asyncHandler = require("../middleware/async");
+
+const _earthRadius = 3962;
 
 // @route   GET api/v1/bootcamps
 // @desc    Get all bootcamps
@@ -26,6 +29,30 @@ exports.getBootcampByIdAsync = asyncHandler(async (req, res, next) => {
     );
   }
   res.status(200).json({ success: true, data: bootcamp });
+});
+
+// @route   GET api/v1/bootcamps/radius/:zipcode/:distance
+// @desc    Get bootcamps within a distance
+// @access  Private
+exports.getBootcampsByDistanceAsync = asyncHandler(async (req, res, next) => {
+  const { zipcode, distance } = req.params;
+  // Get lat/long from geocoder
+  const loc = await geocoder.geocode(zipcode);
+  const lat = loc[0].latitude;
+  const long = loc[0].longitude;
+  // Calc radius using radians - divide distance by radius of earth
+  const radius = distance / _earthRadius; // UOM Radian
+  const bootcamps = await Bootcamp.find({
+    location: { $geoWithin: { $centerSphere: [[long, lat], radius] } }
+  });
+  if (!bootcamps) {
+    return next(
+      new ErrorResponse(`Bootcamp not found with id ${req.params.id}`, 404)
+    );
+  }
+  res
+    .status(200)
+    .json({ success: true, count: bootcamps.length, data: bootcamps });
 });
 
 // @route   POST api/v1/bootcamps
