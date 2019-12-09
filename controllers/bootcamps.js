@@ -9,7 +9,14 @@ const _earthRadius = 3962;
 // @desc    Get all bootcamps
 // @access  Public
 exports.getBootcampsAsync = asyncHandler(async (req, res, next) => {
-  const bootcamps = await Bootcamp.find();
+  let query;
+  let queryStr = JSON.stringify(req.query);
+  queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
+  query = JSON.parse(queryStr);
+  const bootcamps =
+    Object.keys(query).length === 0 // is the query object empty?
+      ? await Bootcamp.find()
+      : await Bootcamp.find(query);
   if (!bootcamps) {
     return next(new ErrorResponse(`No Bootcamps found`, 404));
   }
