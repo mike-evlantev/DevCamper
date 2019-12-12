@@ -3,6 +3,7 @@ const connectDb = require("./config/db");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const bootcamps = require("./routes/bootcamps");
+const courses = require("./routes/courses");
 const errorHandler = require("./middleware/error");
 
 dotenv.config();
@@ -12,13 +13,14 @@ const PORT = process.env.PORT;
 // Global Middleware
 // Body Parser
 app.use(express.json());
-// Morgan logger
+// Morgan logger (Dev logging middleware)
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-// Routes
+// Mount Routes
 app.use("/api/v1/bootcamps", bootcamps);
+app.use("/api/v1/courses", courses);
 // Route Middleware
 app.use(errorHandler);
 
