@@ -10,17 +10,24 @@ connectDb();
 
 // Load models
 const Bootcamp = require("./models/Bootcamp");
+const Course = require("./models/Course");
 
 // Read JSON files
 const bootcamps = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/bootcamps.json`, "utf-8")
 );
 
+const courses = JSON.parse(
+  fs.readFileSync(`${__dirname}/_data/courses.json`, "utf-8")
+);
+
 // Import into DB
 const importDataAsync = async () => {
   try {
-    const result = await Bootcamp.create(bootcamps);
-    console.log(`Imported ${result.length} documents`);
+    const bootcampResults = await Bootcamp.create(bootcamps);
+    const courseResults = await Course.create(courses);
+    console.log(`Imported ${bootcampResults.length} bootcamps`);
+    console.log(`Imported ${courseResults.length} courses`);
     process.exit();
   } catch (error) {
     console.error(error);
@@ -30,8 +37,10 @@ const importDataAsync = async () => {
 // Delete from DB
 const deleteDataAsync = async () => {
   try {
-    const result = await Bootcamp.deleteMany();
-    console.log(`Destroyed ${result.deletedCount} documents`);
+    const bootcampResults = await Bootcamp.deleteMany();
+    const courseResults = await Course.deleteMany();
+    console.log(`Destroyed ${bootcampResults.deletedCount} bootcamps`);
+    console.log(`Destroyed ${courseResults.deletedCount} courses`);
     process.exit();
   } catch (error) {
     console.error(error);
