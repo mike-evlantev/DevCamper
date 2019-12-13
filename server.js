@@ -2,6 +2,7 @@ const express = require("express");
 const connectDb = require("./config/db");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
+const fileUpload = require("express-fileupload");
 const bootcamps = require("./routes/bootcamps");
 const courses = require("./routes/courses");
 const errorHandler = require("./middleware/error");
@@ -17,6 +18,9 @@ app.use(express.json());
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
+// File uploading
+app.use(fileUpload());
 
 // Mount Routes
 app.use("/api/v1/bootcamps", bootcamps);
