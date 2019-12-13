@@ -14,7 +14,7 @@ exports.getBootcampsAsync = asyncHandler(async (req, res, next) => {
   const reqQuery = { ...req.query };
   // Fields to remove
   const removeFields = ["select", "sort", "page", "limit"];
-  //Loop through removeFields and delete them from reqQuery
+  // Loop through removeFields and delete them from reqQuery
   removeFields.forEach(param => delete reqQuery[param]);
   // Create query string
   let queryStr = JSON.stringify(reqQuery);
@@ -134,11 +134,12 @@ exports.updateBootcampByIdAsync = asyncHandler(async (req, res, next) => {
 // @desc    Delete bootcamp by Id
 // @access  Private
 exports.deleteBootcampByIdAsync = asyncHandler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
+  const bootcamp = await Bootcamp.findById(req.params.id);
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp not found with id ${req.params.id}`, 404)
     );
   }
+  bootcamp.remove(); // triggers cascading courses delete via middleware
   res.status(200).json({ success: true, data: {} });
 });
