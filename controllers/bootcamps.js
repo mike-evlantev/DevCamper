@@ -143,3 +143,18 @@ exports.deleteBootcampByIdAsync = asyncHandler(async (req, res, next) => {
   bootcamp.remove(); // triggers cascading courses delete via middleware
   res.status(200).json({ success: true, data: {} });
 });
+
+// @route   Put api/v1/bootcamps/:id/photo
+// @desc    Upload photo for bootcamp
+// @access  Private
+exports.uploadBootcampPhotoAsync = asyncHandler(async (req, res, next) => {
+  const bootcamp = await Bootcamp.findById(req.params.id);
+  if (!bootcamp) {
+    return next(
+      new ErrorResponse(`Bootcamp not found with id ${req.params.id}`, 404)
+    );
+  }
+  if (!req.files) {
+    return next(new ErrorResponse(`Please upload a file`, 400));
+  }
+});
