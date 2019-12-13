@@ -70,7 +70,7 @@ exports.createCourseAsync = asyncHandler(async (req, res, next) => {
 // @route   PUT api/v1/courses/:id
 // @desc    Update a course
 // @access  Private
-exports.updateCourseAsync = asyncHandler(async (req, res, next) => {
+exports.updateCourseByIdAsync = asyncHandler(async (req, res, next) => {
   let course = await Course.findById(req.params.id);
   if (!course) {
     return next(
@@ -84,5 +84,22 @@ exports.updateCourseAsync = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: course
+  });
+});
+
+// @route   DELETE api/v1/courses/:id
+// @desc    Remove a course
+// @access  Private
+exports.deleteCourseByIdAsync = asyncHandler(async (req, res, next) => {
+  const course = await Course.findById(req.params.id);
+  if (!course) {
+    return next(
+      new ErrorResponse(`Course not found with id ${req.params.id}`, 404)
+    );
+  }
+  await course.remove();
+  res.status(200).json({
+    success: true,
+    data: {}
   });
 });

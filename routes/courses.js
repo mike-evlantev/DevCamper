@@ -1,9 +1,10 @@
 const router = require("express").Router({ mergeParams: true }); // mergeParams: Preserve the req.params values from the parent router.
 const {
   createCourseAsync,
+  deleteCourseByIdAsync,
   getCoursesAsync,
   getCourseByIdAsync,
-  updateCourseAsync
+  updateCourseByIdAsync
 } = require("../controllers/courses");
 
 router
@@ -13,6 +14,7 @@ router
 router
   .route("/:id")
   .get(getCourseByIdAsync)
-  .put(updateCourseAsync);
+  .put(updateCourseByIdAsync)
+  .delete(deleteCourseByIdAsync);
 
 module.exports = router;
