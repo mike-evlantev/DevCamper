@@ -9,6 +9,8 @@ const {
   updateBootcampByIdAsync,
   uploadBootcampPhotoAsync
 } = require("../controllers/bootcamps");
+const collate = require("../middleware/collate");
+const Bootcamp = require("../models/Bootcamp");
 
 // Reroute into other resource router
 router.use("/:bootcampId/courses", courseRouter);
@@ -19,7 +21,7 @@ router.route("/:id/photo").put(uploadBootcampPhotoAsync);
 
 router
   .route("/")
-  .get(getBootcampsAsync)
+  .get(collate(Bootcamp, "courses"), getBootcampsAsync)
   .post(createBootcampAsync);
 
 router

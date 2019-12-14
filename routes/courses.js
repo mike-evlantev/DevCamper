@@ -6,10 +6,18 @@ const {
   getCourseByIdAsync,
   updateCourseByIdAsync
 } = require("../controllers/courses");
+const collate = require("../middleware/collate");
+const Course = require("../models/Course");
 
 router
   .route("/")
-  .get(getCoursesAsync)
+  .get(
+    collate(Course, {
+      path: "bootcamp",
+      select: "name description"
+    }),
+    getCoursesAsync
+  )
   .post(createCourseAsync);
 router
   .route("/:id")
