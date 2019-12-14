@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const fileUpload = require("express-fileupload");
 const bootcamps = require("./routes/bootcamps");
 const courses = require("./routes/courses");
+const auth = require("./routes/auth");
 const errorHandler = require("./middleware/error");
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Mount Routes
 app.use("/api/v1/bootcamps", bootcamps);
 app.use("/api/v1/courses", courses);
+app.use("/api/v1/auth", auth);
 // Route Middleware
 app.use(errorHandler);
 
