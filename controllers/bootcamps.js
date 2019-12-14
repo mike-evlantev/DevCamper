@@ -1,3 +1,4 @@
+const path = require("path");
 const ErrorResponse = require("../utils/errorResponse");
 const geocoder = require("../utils/geocoder");
 const Bootcamp = require("../models/Bootcamp");
@@ -157,4 +158,32 @@ exports.uploadBootcampPhotoAsync = asyncHandler(async (req, res, next) => {
   if (!req.files) {
     return next(new ErrorResponse(`Please upload a file`, 400));
   }
+  const file = req.files.file;
+  // Make sure image is a photo
+  if (!file.mimetype.startsWith("image")) {
+    return next(new ErrorResponse(`Please upload an image file`, 400));
+  }
+  // Check file size
+  if (file.size > process.env.MAX_FILE_UPLOAD) {
+    return next(
+      new ErrorResponse(
+        `Please upload an image less than ${process.env.MAX_FILE_UPLOAD} bites`,
+        400
+      )
+    );
+  }
+  // Create custom file name
+  file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`;
+  // Move the file
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async error => {
+    if (error) {
+      console.error(error);
+      return next(new ErrorResponse(`Upload failed`, 500));
+    }
+    // Save to DB
+    await Bootcamp.findByIdAndUpdate(req.params.id, {
+      photo: file.name
+    });
+    res.status(200).json({ success: true, data: file.name });
+  });
 });
