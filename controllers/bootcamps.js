@@ -54,6 +54,8 @@ exports.getBootcampsByDistanceAsync = asyncHandler(async (req, res, next) => {
 // @desc    Create a bootcamp
 // @access  Private
 exports.createBootcampAsync = asyncHandler(async (req, res, next) => {
+  // Add user to req.body
+  req.body.user = req.user.id;
   const bootcamp = await Bootcamp.create(req.body);
   res.status(201).json({ success: true, data: bootcamp });
 });
