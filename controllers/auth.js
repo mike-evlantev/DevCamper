@@ -50,6 +50,21 @@ exports.getMeAsync = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: user });
 });
 
+// @route   GET api/v1/auth/forgotpassword
+// @desc    Forgot password
+// @access  Public
+exports.forgotPasswordAsync = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new ErrorResponse("No user found", 404));
+  }
+  // Get reset token
+  const resetToken = user.getResetPasswordToken();
+  // Save to Db
+  await user.save({ validateBeforeSave: false });
+  res.status(200).json({ success: true, data: user });
+});
+
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
   // Create token
