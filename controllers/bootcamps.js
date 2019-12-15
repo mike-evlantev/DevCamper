@@ -56,6 +56,15 @@ exports.getBootcampsByDistanceAsync = asyncHandler(async (req, res, next) => {
 exports.createBootcampAsync = asyncHandler(async (req, res, next) => {
   // Add user to req.body
   req.body.user = req.user.id;
+  // Check if bootcamp already published
+  const publishedBootcamp = await Bootcamp.findOne({ user: req.user.id });
+  // If the user does not have 'admin' role, they can only publish one bootcamp
+  if (publishedBootcamp && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(`The user has already published a bootcamp`, 400)
+    );
+  }
+
   const bootcamp = await Bootcamp.create(req.body);
   res.status(201).json({ success: true, data: bootcamp });
 });
