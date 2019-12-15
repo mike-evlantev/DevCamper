@@ -2,6 +2,7 @@ const ErrorResponse = require("../utils/errorResponse");
 const Bootcamp = require("../models/Bootcamp");
 const User = require("../models/User");
 const asyncHandler = require("../middleware/async");
+const sendEmail = require("../utils/sendEmail");
 
 // @route   POST api/v1/auth/register
 // @desc    Register a user
@@ -62,7 +63,29 @@ exports.forgotPasswordAsync = asyncHandler(async (req, res, next) => {
   const resetToken = user.getResetPasswordToken();
   // Save to Db
   await user.save({ validateBeforeSave: false });
-  res.status(200).json({ success: true, data: user });
+  // Create reset url
+  const resetUrl = `${req.protocol}://${req.get(
+    "host"
+  )}/api/v1/resetpassword/${resetToken}`;
+  // Create message
+  const msg = {
+    to: "mikeev21@gmail.com",
+    from: "noreply@example.org",
+    subject: "Hello world",
+    text: `PUT: ${resetUrl}`,
+    html: `PUT: ${resetUrl}`
+  };
+  try {
+    const a = sendEmail.send(msg);
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    console.error(error);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    // Save to Db
+    await user.save({ validateBeforeSave: false });
+    return next(new ErrorResponse("Failed to send email", 500));
+  }
 });
 
 // Get token from model, create cookie and send response
