@@ -8,7 +8,7 @@ const {
 } = require("../controllers/courses");
 const collate = require("../middleware/collate");
 const Course = require("../models/Course");
-const { protect } = require("../middleware/auth");
+const { protect, authorize } = require("../middleware/auth");
 
 router
   .route("/")
@@ -19,11 +19,11 @@ router
     }),
     getCoursesAsync
   )
-  .post(protect, createCourseAsync);
+  .post(protect, authorize("publisher", "admin"), createCourseAsync);
 router
   .route("/:id")
   .get(getCourseByIdAsync)
-  .put(protect, updateCourseByIdAsync)
-  .delete(protect, deleteCourseByIdAsync);
+  .put(protect, authorize("publisher", "admin"), updateCourseByIdAsync)
+  .delete(protect, authorize("publisher", "admin"), deleteCourseByIdAsync);
 
 module.exports = router;
