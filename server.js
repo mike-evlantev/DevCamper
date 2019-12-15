@@ -4,6 +4,7 @@ const connectDb = require("./config/db");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const fileUpload = require("express-fileupload");
+const cookieParser = require("cookie-parser");
 const bootcamps = require("./routes/bootcamps");
 const courses = require("./routes/courses");
 const auth = require("./routes/auth");
@@ -16,6 +17,8 @@ const PORT = process.env.PORT;
 // Global Middleware
 // Body Parser
 app.use(express.json());
+// Cookie Parser
+app.use(cookieParser());
 // Morgan logger (Dev logging middleware)
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
