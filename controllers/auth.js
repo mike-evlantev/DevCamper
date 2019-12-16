@@ -57,7 +57,7 @@ exports.getMeAsync = asyncHandler(async (req, res, next) => {
 exports.forgotPasswordAsync = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
-    return next(new ErrorResponse("No user found", 404));
+    return next(new ErrorResponse("User not found", 404));
   }
   // Get reset token
   const resetToken = user.getResetPasswordToken();
@@ -109,6 +109,20 @@ exports.resetPasswordAsync = asyncHandler(async (req, res, next) => {
   user.password = req.body.password;
   user.resetPasswordToken = undefined;
   user.resetPasswordExpire = undefined;
+  await user.save();
+  sendTokenResponse(user, 200, res);
+});
+
+// @route   PUT api/v1/auth/updatepassword
+// @desc    Update password
+// @access  Private
+exports.updatePasswordAsync = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select("+password");
+  // Check current password
+  if (!(await user.matchPassword(req.body.currentPassword))) {
+    return next(new ErrorResponse("User not found", 400));
+  }
+  user.password = req.body.newPassword;
   await user.save();
   sendTokenResponse(user, 200, res);
 });
