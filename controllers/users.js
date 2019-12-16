@@ -6,7 +6,7 @@ const asyncHandler = require("../middleware/async");
 // @desc    Get all users
 // @access  Private (Admin)
 exports.getUsersAsync = asyncHandler(async (req, res, next) => {
-  res.status(200).json(res.collate);
+  res.status(200).json(res.collation);
 });
 
 // @route   GET api/v1/users/:id
