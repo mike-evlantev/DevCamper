@@ -1,5 +1,5 @@
+const crypto = require("crypto");
 const ErrorResponse = require("../utils/errorResponse");
-const Bootcamp = require("../models/Bootcamp");
 const User = require("../models/User");
 const asyncHandler = require("../middleware/async");
 const sendEmail = require("../utils/sendEmail");
@@ -66,7 +66,7 @@ exports.forgotPasswordAsync = asyncHandler(async (req, res, next) => {
   // Create reset url
   const resetUrl = `${req.protocol}://${req.get(
     "host"
-  )}/api/v1/resetpassword/${resetToken}`;
+  )}/api/v1/auth/resetpassword/${resetToken}`;
   // Create message
   const msg = {
     to: "mikeev21@gmail.com",
@@ -76,8 +76,8 @@ exports.forgotPasswordAsync = asyncHandler(async (req, res, next) => {
     html: `PUT: ${resetUrl}`
   };
   try {
-    const a = sendEmail.send(msg);
-    res.status(200).json({ success: true, data: user });
+    sendEmail.send(msg);
+    res.status(200).json({ success: true });
   } catch (error) {
     console.error(error);
     user.resetPasswordToken = undefined;
@@ -86,6 +86,31 @@ exports.forgotPasswordAsync = asyncHandler(async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
     return next(new ErrorResponse("Failed to send email", 500));
   }
+});
+
+// @route   PUT api/v1/auth/resetpassword/:resetToken
+// @desc    Reset password
+// @access  Public
+exports.resetPasswordAsync = asyncHandler(async (req, res, next) => {
+  // Get hashed token
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(req.params.resetToken)
+    .digest("hex");
+  // Get user by reset token
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() }
+  });
+  if (!user) {
+    return next(new ErrorResponse("Invalid token", 400));
+  }
+  // Set new password
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+  await user.save();
+  sendTokenResponse(user, 200, res);
 });
 
 // Get token from model, create cookie and send response
