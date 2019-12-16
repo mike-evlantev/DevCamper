@@ -31,37 +31,45 @@ const reviews = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/reviews.json`, "utf-8")
 );
 
+const createResource = async (model, data) => {
+  const results = await model.create(data);
+  console.log(`Imported ${results.length} ${model.modelName}s`);
+};
+
+const deleteResource = async model => {
+  const results = await model.deleteMany();
+  console.log(`Destroyed ${results.deletedCount} ${model.modelName}s`);
+};
+
 // Import into DB
 const importDataAsync = async () => {
   try {
-    const bootcampResults = await Bootcamp.create(bootcamps);
-    const courseResults = await Course.create(courses);
-    const userResults = await User.create(users);
-    const reviewResults = await Review.create(reviews);
-    console.log(`Imported ${bootcampResults.length} bootcamps`);
-    console.log(`Imported ${courseResults.length} courses`);
-    console.log(`Imported ${userResults.length} users`);
-    console.log(`Imported ${reviewResults.length} reviews`);
+    await createResource(Bootcamp, bootcamps);
+    await createResource(Course, courses);
+    await createResource(User, users);
+    await createResource(Review, reviews);
+
     process.exit();
   } catch (error) {
     console.error(error);
+    console.log("Process terminated.");
+    process.exit();
   }
 };
 
 // Delete from DB
 const deleteDataAsync = async () => {
   try {
-    const bootcampResults = await Bootcamp.deleteMany();
-    const courseResults = await Course.deleteMany();
-    const userResults = await User.deleteMany();
-    const reviewResults = await User.deleteMany();
-    console.log(`Destroyed ${bootcampResults.deletedCount} bootcamps`);
-    console.log(`Destroyed ${courseResults.deletedCount} courses`);
-    console.log(`Destroyed ${userResults.deletedCount} users`);
-    console.log(`Destroyed ${reviewResults.deletedCount} users`);
+    await deleteResource(Bootcamp);
+    await deleteResource(Course);
+    await deleteResource(User);
+    await deleteResource(Review);
+
     process.exit();
   } catch (error) {
     console.error(error);
+    console.log("Process terminated.");
+    process.exit();
   }
 };
 
