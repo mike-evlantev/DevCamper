@@ -1,4 +1,5 @@
 const courseRouter = require("./courses"); // Include routers for other resources
+const reviewRouter = require("./reviews"); // Include routers for other resources
 const router = require("express").Router();
 const {
   createBootcampAsync,
@@ -15,6 +16,7 @@ const { protect, authorize } = require("../middleware/auth");
 
 // Reroute into other resource router
 router.use("/:bootcampId/courses", courseRouter);
+router.use("/:bootcampId/reviews", reviewRouter);
 
 router.route("/radius/:zipcode/:distance").get(getBootcampsByDistanceAsync);
 
