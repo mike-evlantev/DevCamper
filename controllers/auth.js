@@ -27,7 +27,7 @@ exports.loginAsync = asyncHandler(async (req, res, next) => {
   // Validate email and password
   if (!email || !password) {
     return next(
-      new ErrorResponse("Please provider and email and password", 400)
+      new ErrorResponse("Please provider an email and password", 400)
     );
   }
   // Check for user
@@ -55,6 +55,9 @@ exports.getMeAsync = asyncHandler(async (req, res, next) => {
 // @desc    Forgot password
 // @access  Public
 exports.forgotPasswordAsync = asyncHandler(async (req, res, next) => {
+  if (!req.body.email) {
+    return next(new ErrorResponse("Please provide an email", 404));
+  }
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     return next(new ErrorResponse("User not found", 404));
@@ -92,6 +95,9 @@ exports.forgotPasswordAsync = asyncHandler(async (req, res, next) => {
 // @desc    Reset password
 // @access  Public
 exports.resetPasswordAsync = asyncHandler(async (req, res, next) => {
+  if (!req.params.resetToken) {
+    return next(new ErrorResponse("Token not found", 400));
+  }
   // Get hashed token
   const resetPasswordToken = crypto
     .createHash("sha256")
@@ -118,6 +124,17 @@ exports.resetPasswordAsync = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.updatePasswordAsync = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id).select("+password");
+  if (!req.body.currentPassword && !req.body.newPassword) {
+    return next(
+      new ErrorResponse("Please provider current and new password", 400)
+    );
+  }
+  if (!req.body.currentPassword || !req.body.newPassword) {
+    let error = `Please provider ${!req.body.currentPassword ? "current" : ""}${
+      !req.body.newPassword ? "new" : ""
+    } password`;
+    return next(new ErrorResponse(error, 400));
+  }
   // Check current password
   if (!(await user.matchPassword(req.body.currentPassword))) {
     return next(new ErrorResponse("User not found", 400));
