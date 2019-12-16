@@ -12,6 +12,7 @@ connectDb();
 const Bootcamp = require("./models/Bootcamp");
 const Course = require("./models/Course");
 const User = require("./models/User");
+const Review = require("./models/Review");
 
 // Read JSON files
 const bootcamps = JSON.parse(
@@ -26,15 +27,21 @@ const users = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/users.json`, "utf-8")
 );
 
+const reviews = JSON.parse(
+  fs.readFileSync(`${__dirname}/_data/reviews.json`, "utf-8")
+);
+
 // Import into DB
 const importDataAsync = async () => {
   try {
     const bootcampResults = await Bootcamp.create(bootcamps);
     const courseResults = await Course.create(courses);
     const userResults = await User.create(users);
+    const reviewResults = await Review.create(reviews);
     console.log(`Imported ${bootcampResults.length} bootcamps`);
     console.log(`Imported ${courseResults.length} courses`);
     console.log(`Imported ${userResults.length} users`);
+    console.log(`Imported ${reviewResults.length} reviews`);
     process.exit();
   } catch (error) {
     console.error(error);
@@ -47,9 +54,11 @@ const deleteDataAsync = async () => {
     const bootcampResults = await Bootcamp.deleteMany();
     const courseResults = await Course.deleteMany();
     const userResults = await User.deleteMany();
+    const reviewResults = await User.deleteMany();
     console.log(`Destroyed ${bootcampResults.deletedCount} bootcamps`);
     console.log(`Destroyed ${courseResults.deletedCount} courses`);
     console.log(`Destroyed ${userResults.deletedCount} users`);
+    console.log(`Destroyed ${reviewResults.deletedCount} users`);
     process.exit();
   } catch (error) {
     console.error(error);
