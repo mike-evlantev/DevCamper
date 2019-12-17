@@ -2,7 +2,8 @@ const router = require("express").Router({ mergeParams: true }); // mergeParams:
 const {
   getReviewsAsync,
   getReviewByIdAsync,
-  createReviewAsync
+  createReviewAsync,
+  updateReviewByIdAsync
 } = require("../controllers/reviews");
 const collate = require("../middleware/collate");
 const Review = require("../models/Review");
@@ -19,8 +20,10 @@ router
   )
   .post(protect, authorize("user", "admin"), createReviewAsync);
 
-router.route("/:id").get(getReviewByIdAsync);
-// .put(protect, authorize("publisher", "admin"), updateCourseByIdAsync)
-// .delete(protect, authorize("publisher", "admin"), deleteCourseByIdAsync);
+router
+  .route("/:id")
+  .get(getReviewByIdAsync)
+  .put(protect, authorize("user", "admin"), updateReviewByIdAsync);
+// .delete(protect, authorize("user", "admin"), deleteCourseByIdAsync);
 
 module.exports = router;
