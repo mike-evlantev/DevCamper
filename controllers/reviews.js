@@ -36,7 +36,7 @@ exports.getReviewByIdAsync = asyncHandler(async (req, res, next) => {
 // @desc    Create review
 // @access  Private
 exports.createReviewAsync = asyncHandler(async (req, res, next) => {
-  req.body.bootcamps = req.params.bootcampId;
+  req.body.bootcamp = req.params.bootcampId;
   req.body.user = req.user.id;
   const bootcamp = await Bootcamp.findById(req.params.bootcampId);
   if (!bootcamp) {
