@@ -3,6 +3,7 @@ const { protect } = require("../middleware/auth");
 const {
   registerAsync,
   loginAsync,
+  logout,
   getMeAsync,
   forgotPasswordAsync,
   resetPasswordAsync,
@@ -11,6 +12,7 @@ const {
 
 router.route("/register").post(registerAsync);
 router.route("/login").post(loginAsync);
+router.route("/logout").get(protect, logout);
 router.route("/me").get(protect, getMeAsync);
 router.route("/forgotpassword").post(forgotPasswordAsync);
 router.route("/resetpassword/:resetToken").put(resetPasswordAsync);
