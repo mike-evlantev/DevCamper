@@ -6,6 +6,8 @@ const morgan = require("morgan");
 const fileUpload = require("express-fileupload");
 const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
+const xss = require("xss-clean");
 const bootcamps = require("./routes/bootcamps");
 const courses = require("./routes/courses");
 const users = require("./routes/users");
@@ -34,6 +36,12 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Sanitize data
 app.use(mongoSanitize());
+
+// Set security headers
+app.use(helmet());
+
+// Prevent cross site scripting
+app.use(xss());
 
 // Mount Routes
 app.use("/api/v1/bootcamps", bootcamps);
