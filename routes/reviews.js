@@ -3,7 +3,8 @@ const {
   getReviewsAsync,
   getReviewByIdAsync,
   createReviewAsync,
-  updateReviewByIdAsync
+  updateReviewByIdAsync,
+  deleteReviewByIdAsync
 } = require("../controllers/reviews");
 const collate = require("../middleware/collate");
 const Review = require("../models/Review");
@@ -23,7 +24,7 @@ router
 router
   .route("/:id")
   .get(getReviewByIdAsync)
-  .put(protect, authorize("user", "admin"), updateReviewByIdAsync);
-// .delete(protect, authorize("user", "admin"), deleteCourseByIdAsync);
+  .put(protect, authorize("user", "admin"), updateReviewByIdAsync)
+  .delete(protect, authorize("user", "admin"), deleteReviewByIdAsync);
 
 module.exports = router;

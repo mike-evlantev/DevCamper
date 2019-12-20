@@ -66,5 +66,24 @@ exports.updateReviewByIdAsync = asyncHandler(async (req, res, next) => {
   // TODO: fix average rating on update
   // calling to trigger 'post save' middleware on schema
   // review.getAverageRating(review.bootcamp);
-  return res.status(201).json({ success: true, data: review });
+  return res.status(200).json({ success: true, data: review });
+});
+
+// @route   DELETE api/v1/reviews/:id
+// @desc    Delete review
+// @access  Private
+exports.deleteReviewByIdAsync = asyncHandler(async (req, res, next) => {
+  let review = await Review.findById(req.params.id);
+  if (!review) {
+    return next(new ErrorResponse(`Review not found`, 404));
+  }
+  // Is user review owner?
+  if (review.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(new ErrorResponse(`User not authorized to update review`, 401));
+  }
+  await review.remove();
+  // TODO: fix average rating on update
+  // calling to trigger 'post save' middleware on schema
+  // review.getAverageRating(review.bootcamp);
+  return res.status(200).json({ success: true, data: {} });
 });
