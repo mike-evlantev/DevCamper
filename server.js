@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const fileUpload = require("express-fileupload");
 const cookieParser = require("cookie-parser");
+const mongoSanitize = require("express-mongo-sanitize");
 const bootcamps = require("./routes/bootcamps");
 const courses = require("./routes/courses");
 const users = require("./routes/users");
@@ -28,7 +29,11 @@ if (process.env.NODE_ENV === "development") {
 
 // File uploading
 app.use(fileUpload());
+// Set static folder
 app.use(express.static(path.join(__dirname, "public")));
+
+// Sanitize data
+app.use(mongoSanitize());
 
 // Mount Routes
 app.use("/api/v1/bootcamps", bootcamps);
