@@ -8,6 +8,9 @@ const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
 const xss = require("xss-clean");
+const rateLimit = require("express-rate-limit");
+const hpp = require("hpp");
+const cors = require("cors");
 const bootcamps = require("./routes/bootcamps");
 const courses = require("./routes/courses");
 const users = require("./routes/users");
@@ -34,14 +37,18 @@ app.use(fileUpload());
 // Set static folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// Sanitize data
-app.use(mongoSanitize());
+// Security
+app.use(mongoSanitize()); // Sanitize data
+app.use(helmet()); // Set security headers
+app.use(xss()); // Prevent cross site scripting
+app.use(hpp()); // Prevent http param pollution
+app.use(cors()); // Enable CORS
 
-// Set security headers
-app.use(helmet());
-
-// Prevent cross site scripting
-app.use(xss());
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 mins
+  max: 100
+});
+app.use(limiter); // Limits repeated requests
 
 // Mount Routes
 app.use("/api/v1/bootcamps", bootcamps);
